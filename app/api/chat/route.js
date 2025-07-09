@@ -1,7 +1,7 @@
 import { getPdfQa } from "@/app/chat/ragBot";
 
 export async function POST(req) {
-  const { message } = await req.json();   // <-- accept "message"
+  const { message } = await req.json();   
 
   if (!message || typeof message !== "string") {
     return Response.json({ error: "Invalid input" }, { status: 400 });
@@ -15,3 +15,5 @@ export async function POST(req) {
 
   return Response.json({ answer });  
 }
+
+

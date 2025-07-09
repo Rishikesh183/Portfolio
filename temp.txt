@@ -1,162 +1,20 @@
-// import { Ollama, OllamaEmbeddings } from "@langchain/ollama";
-// import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
-// import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
-// import { MemoryVectorStore } from "langchain/vectorstores/memory";
-// import path from "path";
-// import { ChatPromptTemplate } from "@langchain/core/prompts";
-// import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
-// import { createRetrievalChain } from "langchain/chains/retrieval";
-// import { BufferMemory, ChatMessageHistory } from "langchain/memory"; // <-- Import BufferMemory
+// import { SarvamAIClient } from "sarvamai";
 
-// class PdfQA {
-//   constructor({
-//     model,
-//     pdfDocument,
-//     chunkSize,
-//     chunkOverlap,
-//     searchType = "similarity",
-//     kDocuments,
-//     temperature = 0.8,
-//     searchKwargs
-//   }) {
-//     this.model = model;
-//     this.pdfDocument = pdfDocument;
-//     this.chunkSize = chunkSize;
-//     this.chunkOverlap = chunkOverlap;
-//     this.searchType = searchType;
-//     this.kDocuments = kDocuments;
-//     this.temperature = temperature;
-//     this.searchKwargs = searchKwargs;
+// export async function POST(req) {
+//   const { message } = await req.json()
+//   const client = new SarvamAIClient({
+//     apiSubscriptionKey: "904f2cc1-b28d-4ba3-883d-1e5cb8c33747"
+//   });
 
-//     // Initialize BufferMemory and track chat history
-//     this.chatHistory = new ChatMessageHistory();
-//     this.memory = new BufferMemory({ chatHistory: this.chatHistory });
-//   }
+//   const response = await client.chat.completions({
+//     messages: [
+//       {
+//         role: "user",
+//         content: message,
+//       },],
+//   });
+//   // console.log(response.choices[0].message.content);
+//   const answer = response.choices[0].message.content || "Sorry, I don't know.";
 
-//   async init() {
-//     this.initChatModel();
-//     await this.loadDocuments();
-//     this.selectEmbedding = new OllamaEmbeddings({ model: "nomic-embed-text:latest" });
-//     await this.splitDocuments();
-//     await this.createVectorStore();
-//     this.createRetriever();
-//     this.chain = await this.createChain();
-//     return this;
-//   }
-
-//   initChatModel() {
-//     console.log("Loading model...");
-//     this.llm = new Ollama({
-//       model: this.model,
-//       temperature: this.temperature
-//     });
-//   }
-
-//   async loadDocuments() {
-//     console.log("Loading PDFs...");
-//     const pdfLoader = new PDFLoader(this.pdfDocument);
-//     this.documents = await pdfLoader.load();
-//   }
-
-//   async splitDocuments() {
-//     console.log("Splitting documents...");
-//     const textSplitter = new RecursiveCharacterTextSplitter({
-//       chunkSize: this.chunkSize,
-//       chunkOverlap: this.chunkOverlap
-//     });
-//     this.texts = await textSplitter.splitDocuments(this.documents);
-//   }
-
-//   async createVectorStore() {
-//     console.log("Creating document embeddings...");
-//     this.db = await MemoryVectorStore.fromDocuments(this.texts, this.selectEmbedding);
-//   }
-
-//   createRetriever() {
-//     console.log("Initialize vector store retriever...");
-//     const retrieverOptions = {
-//       k: this.kDocuments,
-//       searchType: this.searchType,
-//     };
-//     if (this.searchKwargs) {
-//       retrieverOptions.searchKwargs = this.searchKwargs;
-//     }
-//     this.retriever = this.db.asRetriever(retrieverOptions);
-//   }
-
-//   async createChain() {
-//     console.log("Creating Retrieval QA Chain...");
-//     const prompt = ChatPromptTemplate.fromTemplate(`
-//       You are a highly intelligent assistant and your name is Rishi, trained specifically on Rishikesh's resume and experiences.
-//       Use ONLY the provided context to answer questions, but answer in a professional and engaging manner.
-
-//       If the user says 'hi', 'hello', or any greeting, greet **only once** during the conversation. 
-//       After the first greeting, do not greet again, just answer their questions professionally.
-
-//       If asked about projects, explain what the project is, what technologies were used, and what skills it demonstrates.
-      
-//       If asked about experience, describe the roles, achievements, and learnings.
-      
-//       If the context does not contain enough information, politely respond with:
-//       "I don't know based on the given data."
-      
-//       Always maintain a tone that is clear, confident, and human-like.
-
-//       ---
-//       Question: {input}
-//       Context: {context}
-//     `);
-
-//     const combineDocsChain = await createStuffDocumentsChain({
-//       llm: this.llm,
-//       prompt,
-//     });
-
-//     const chain = await createRetrievalChain({
-//       combineDocsChain,
-//       retriever: this.retriever,
-//       memory: this.memory, // <-- Attach memory here
-//     });
-
-//     return chain;
-//   }
-
-//   queryChain() {
-//     return this.chain;
-//   }
-// }
-
-// // 🔥 Global Development Caching Trick
-// let pdfQaInstance;
-
-// export async function getPdfQa() {
-//   if (process.env.NODE_ENV === "development") {
-//     if (!global._pdfQaInstance) {
-//       global._pdfQaInstance = await new PdfQA({
-//         model: "mistral",
-//         pdfDocument: path.join(process.cwd(), "app", "data", "Rishikesh_Data.pdf"),
-//         chunkSize: 1000,
-//         chunkOverlap: 0,
-//         searchType: "mmr",
-//         searchKwargs: { fetchK: 200, lambda: 1 },
-//         kDocuments: 3,
-//         temperature: 0,
-//       }).init();
-//     }
-//     return global._pdfQaInstance;
-//   } else {
-//     if (!pdfQaInstance) {
-//       pdfQaInstance = await new PdfQA({
-//         model: "mistral",
-//         pdfDocument: path.join(process.cwd(), "app", "data", "RISHIKESH_RESUME_AI (1).pdf"),
-//         chunkSize: 1000,
-//         chunkOverlap: 0,
-//         searchType: "mmr",
-//         searchKwargs: { fetchK: 200, lambda: 1 },
-//         kDocuments: 3,
-//         temperature: 0,
-//       }).init();
-//     }
-//     return pdfQaInstance;
-//   }
+//   return Response.json({ answer });
 // }

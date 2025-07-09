@@ -1,164 +1,102 @@
-import { Ollama, OllamaEmbeddings } from "@langchain/ollama";
-import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
-import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
-import { MemoryVectorStore } from "langchain/vectorstores/memory";
-import path from "path";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
-import { createRetrievalChain } from "langchain/chains/retrieval";
+import fs from 'fs';
+import path from 'path';
+import pdfParse from 'pdf-parse';
+import { generateText, embed } from 'ai';
+import { google } from '@ai-sdk/google';
 
-class PdfQA {
-  constructor({ model, pdfDocument, chunkSize, chunkOverlap, searchType = "similarity", kDocuments, temperature = 0.8, searchKwargs }) {
-    this.model = model;
-    this.pdfDocument = pdfDocument;
-    this.chunkSize = chunkSize;
-    this.chunkOverlap = chunkOverlap;
-    this.searchType = searchType;
-    this.kDocuments = kDocuments;
-    this.temperature = temperature;
-    this.searchKwargs = searchKwargs;
+const DATA_DIR = path.join(process.cwd(), 'app', 'data');
+const CHUNK_SIZE = 1000;
+const CHUNK_OVERLAP = 200;
+const EMBEDDING_MODEL = google('models/embedding-001');
+const LLM_MODEL = google('models/gemini-2.0-flash-exp');
+
+let knowledgeBase = null;
+
+function chunkText(text, chunkSize = CHUNK_SIZE, overlap = CHUNK_OVERLAP) {
+  const chunks = [];
+  let i = 0;
+  while (i < text.length) {
+    const chunk = text.slice(i, i + chunkSize);
+    chunks.push(chunk);
+    i += chunkSize - overlap;
   }
-
-  async init() {
-    this.initChatModel();
-    await this.loadDocuments();
-    this.selectEmbedding = new OllamaEmbeddings({ model: "nomic-embed-text:latest" });
-    await this.splitDocuments();
-    await this.createVectorStore();
-    this.createRetriever();
-    this.chain = await this.createChain();
-    return this;
-  }
-
-  initChatModel() {
-    console.log("Loading model...");
-    this.llm = new Ollama({
-      model: this.model,
-      temperature: this.temperature
-    });
-  }
-
-  async loadDocuments() {
-    console.log("Loading PDFs...");
-    const pdfLoader = new PDFLoader(this.pdfDocument);
-    this.documents = await pdfLoader.load();
-  }
-
-  async splitDocuments() {
-    console.log("Splitting documents...");
-    const textSplitter = new RecursiveCharacterTextSplitter({
-      chunkSize: this.chunkSize,
-      chunkOverlap: this.chunkOverlap
-    });
-    this.texts = await textSplitter.splitDocuments(this.documents);
-  }
-
-  async createVectorStore() {
-    console.log("Creating document embeddings...");
-    this.db = await MemoryVectorStore.fromDocuments(this.texts, this.selectEmbedding);
-  }
-
-  createRetriever() {
-    console.log("Initialize vector store retriever...");
-    const retrieverOptions = {
-      k: this.kDocuments,
-      searchType: this.searchType,
-    };
-    if (this.searchKwargs) {
-      retrieverOptions.searchKwargs = this.searchKwargs;
-    }
-    this.retriever = this.db.asRetriever(retrieverOptions);
-  }
-
-  async createChain() {
-    console.log("Creating Retrieval QA Chain...");
-    const prompt = ChatPromptTemplate.fromTemplate(
-      `You are a highly intelligent assistant and Your name is Rishi trained specifically on Rishikesh's resume and experiences.
-      Use ONLY the provided context to answer questions, but answer in a professional, and engaging manner.
-      Try to answer in short 
-      Here are some examples of how you should respond:
-
-    ---
-
-    **Example 1:**
-    User: "Hi"
-    Assistant: "Hello! It's great to connect with you. I'm Rishi, your highly intelligent assistant trained specifically on my resume and experiences.I'm excited to help answer any questions or provide insights you may have."
-
-    **Example 2:**
-    User: "who is Friend of rishikesh"
-    Assistant: "Sorry there is no data on this certain topic"
-
-    **Example 3:**
-    User: "Tell me about Yourself"
-    Assistant: "I have mastered web development with the help many projects , and i always loved to learn about AI currently i am in the search of a Job which could help me to explore real world projects"
-
-    ---
-
-
-      If asked about projects, explain what the project is, what technologies were used, and what skills it demonstrates, 
-      instead of simply listing them.
-      
-      If asked about experience, describe the roles, achievements, and learnings.
-      
-      If the context does not contain enough information, politely respond with:
-      "I don't know based on the given data."
-      
-      Always maintain a tone that is clear, confident, and human-like.
-      
-      ---
-      Question: {input}
-      Context: {context}
-      `);
-
-
-    const combineDocsChain = await createStuffDocumentsChain({
-      llm: this.llm,
-      prompt,
-    });
-
-    const chain = await createRetrievalChain({
-      combineDocsChain,
-      retriever: this.retriever,
-    });
-
-    return chain;
-  }
-
-  queryChain() {
-    return this.chain;
-  }
+  return chunks;
 }
 
-let pdfQaInstance;
+async function loadAndEmbedKnowledgeBase() {
+  const pdfFiles = fs.readdirSync(DATA_DIR).filter(f => f.endsWith('.pdf'));
+  let allChunks = [];
+  for (const file of pdfFiles) {
+    const filePath = path.join(DATA_DIR, file);
+    const dataBuffer = fs.readFileSync(filePath);
+    const data = await pdfParse(dataBuffer);
+    const chunks = chunkText(data.text);
+    allChunks = allChunks.concat(chunks.map(chunk => ({ chunk, source: file })));
+  }
+  // Embed all chunks
+  const embeddings = [];
+  for (const { chunk, source } of allChunks) {
+    const { embedding } = await embed({
+      model: EMBEDDING_MODEL,
+      value: chunk,
+      apiKey: process.env.GOOGLE_API_KEY,
+    });
+    embeddings.push({ embedding, chunk, source });
+  }
+  return embeddings;
+}
+
+function cosineSimilarity(a, b) {
+  let dot = 0.0;
+  let normA = 0.0;
+  let normB = 0.0;
+  for (let i = 0; i < a.length; i++) {
+    dot += a[i] * b[i];
+    normA += a[i] * a[i];
+    normB += b[i] * b[i];
+  }
+  return dot / (Math.sqrt(normA) * Math.sqrt(normB));
+}
+
+async function getKnowledgeBase() {
+  if (!knowledgeBase) {
+    knowledgeBase = await loadAndEmbedKnowledgeBase();
+  }
+  return knowledgeBase;
+}
 
 export async function getPdfQa() {
-  if (process.env.NODE_ENV === "development") {
-    if (!global._pdfQaInstance) {
-      global._pdfQaInstance = await new PdfQA({
-        model: "llama3",
-        pdfDocument: path.join(process.cwd(), "app", "data", "Rishikesh_Data.pdf"),
-        chunkSize: 1000,
-        chunkOverlap: 0,
-        searchType: "mmr",
-        searchKwargs: { fetchK: 200, lambda: 1 },
-        kDocuments: 3,
-        temperature: 0,
-      }).init();
-    }
-    return global._pdfQaInstance;
-  } else {
-    if (!pdfQaInstance) {
-      pdfQaInstance = await new PdfQA({
-        model: "llama3",
-        pdfDocument: path.join(process.cwd(), "app", "data", "RISHIKESH_RESUME_AI (1).pdf"),
-        chunkSize: 1000,
-        chunkOverlap: 0,
-        searchType: "mmr",
-        searchKwargs: { fetchK: 200, lambda: 1 },
-        kDocuments: 3,
-        temperature: 0,
-      }).init();
-    }
-    return pdfQaInstance;
-  }
+  // RAG chain
+  return {
+    queryChain() {
+      return {
+        async invoke({ input }) {
+          const kb = await getKnowledgeBase();
+          // Embed the query
+          const { embedding: queryEmbedding } = await embed({
+            model: EMBEDDING_MODEL,
+            value: input,
+            apiKey: process.env.GOOGLE_API_KEY,
+          });
+          // Find top 2 most similar chunks
+          const scored = kb.map(({ embedding, chunk, source }) => ({
+            score: cosineSimilarity(queryEmbedding, embedding),
+            chunk,
+            source,
+          }));
+          scored.sort((a, b) => b.score - a.score);
+          const topChunks = scored.slice(0, 2).map(s => s.chunk).join('\n---\n');
+          // Compose prompt
+          const prompt = `You are an AI assistant answering questions about Rishikesh. Use the following context from his resume and data.\n\nContext:\n${topChunks}\n\nQuestion: ${input}\n\nAnswer:`;
+          // Get answer from Gemini
+          const { text } = await generateText({
+            model: LLM_MODEL,
+            prompt,
+            apiKey: process.env.GOOGLE_API_KEY,
+          });
+          return { answer: text };
+        },
+      };
+    },
+  };
 }
