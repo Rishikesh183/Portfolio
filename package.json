@@ -12,9 +12,10 @@
   },
   "dependencies": {
     "@ai-sdk/google": "^1.2.22",
-    "@huggingface/inference": "^2.8.1",
+    "@google/generative-ai": "^0.24.1",
+    "@huggingface/inference": "^4.4.0",
     "@huggingface/transformers": "^3.6.2",
-    "@langchain/community": "^0.3.41",
+    "@langchain/community": "^0.3.48",
     "@langchain/core": "^0.3.46",
     "@langchain/google-genai": "^0.2.14",
     "@langchain/ollama": "^0.2.0",

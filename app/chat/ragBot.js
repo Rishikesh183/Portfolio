@@ -1,14 +1,12 @@
 import fs from 'fs';
 import path from 'path';
-import pdfParse from 'pdf-parse';
-import { generateText, embed } from 'ai';
-import { google } from '@ai-sdk/google';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const DATA_DIR = path.join(process.cwd(), 'app', 'data');
 const CHUNK_SIZE = 1000;
 const CHUNK_OVERLAP = 200;
-const EMBEDDING_MODEL = google('models/embedding-001');
-const LLM_MODEL = google('models/gemini-2.0-flash-exp');
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY);
+const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
 let knowledgeBase = null;
 
@@ -24,38 +22,33 @@ function chunkText(text, chunkSize = CHUNK_SIZE, overlap = CHUNK_OVERLAP) {
 }
 
 async function loadAndEmbedKnowledgeBase() {
-  const pdfFiles = fs.readdirSync(DATA_DIR).filter(f => f.endsWith('.pdf'));
-  let allChunks = [];
-  for (const file of pdfFiles) {
-    const filePath = path.join(DATA_DIR, file);
-    const dataBuffer = fs.readFileSync(filePath);
-    const data = await pdfParse(dataBuffer);
-    const chunks = chunkText(data.text);
-    allChunks = allChunks.concat(chunks.map(chunk => ({ chunk, source: file })));
+  if (!fs.existsSync(DATA_DIR)) {
+    console.error(`DATA_DIR not found: ${DATA_DIR}`);
+    return [];
   }
-  // Embed all chunks
-  const embeddings = [];
-  for (const { chunk, source } of allChunks) {
-    const { embedding } = await embed({
-      model: EMBEDDING_MODEL,
-      value: chunk,
-      apiKey: process.env.GOOGLE_API_KEY,
-    });
-    embeddings.push({ embedding, chunk, source });
-  }
-  return embeddings;
-}
 
-function cosineSimilarity(a, b) {
-  let dot = 0.0;
-  let normA = 0.0;
-  let normB = 0.0;
-  for (let i = 0; i < a.length; i++) {
-    dot += a[i] * b[i];
-    normA += a[i] * a[i];
-    normB += b[i] * b[i];
+  const textFiles = fs.readdirSync(DATA_DIR).filter(f => f.endsWith('.txt'));
+
+  if (textFiles.length === 0) {
+    throw new Error("No .txt files found in data directory.");
   }
-  return dot / (Math.sqrt(normA) * Math.sqrt(normB));
+
+  let allChunks = [];
+
+  for (const file of textFiles) {
+    const filePath = path.join(DATA_DIR, file);
+
+    try {
+      const content = fs.readFileSync(filePath, 'utf-8');
+      const chunks = chunkText(content);
+      allChunks = allChunks.concat(chunks.map(chunk => ({ chunk, source: file })));
+    } catch (error) {
+      console.error(`Error reading file ${file}:`, error);
+      continue;
+    }
+  }
+
+  return allChunks;
 }
 
 async function getKnowledgeBase() {
@@ -66,35 +59,60 @@ async function getKnowledgeBase() {
 }
 
 export async function getPdfQa() {
-  // RAG chain
   return {
     queryChain() {
       return {
         async invoke({ input }) {
-          const kb = await getKnowledgeBase();
-          // Embed the query
-          const { embedding: queryEmbedding } = await embed({
-            model: EMBEDDING_MODEL,
-            value: input,
-            apiKey: process.env.GOOGLE_API_KEY,
-          });
-          // Find top 2 most similar chunks
-          const scored = kb.map(({ embedding, chunk, source }) => ({
-            score: cosineSimilarity(queryEmbedding, embedding),
-            chunk,
-            source,
-          }));
-          scored.sort((a, b) => b.score - a.score);
-          const topChunks = scored.slice(0, 2).map(s => s.chunk).join('\n---\n');
-          // Compose prompt
-          const prompt = `You are an AI assistant answering questions about Rishikesh. Use the following context from his resume and data.\n\nContext:\n${topChunks}\n\nQuestion: ${input}\n\nAnswer:`;
-          // Get answer from Gemini
-          const { text } = await generateText({
-            model: LLM_MODEL,
-            prompt,
-            apiKey: process.env.GOOGLE_API_KEY,
-          });
-          return { answer: text };
+          try {
+            const kb = await getKnowledgeBase();
+
+            const context = kb.map(({ chunk }) => chunk).join('\n---\n');
+
+            const prompt = `You are a helpful and knowledgeable assistant that answers questions about Rishikesh based strictly on the following context, which is derived from his resume and personal documents.
+
+            You are an AI chatbot designed to answer questions about Rishikesh. Use the resume content below. If not mentioned, be honest and say it's not in the context. Keep it friendly but informative.
+
+            Instructions:
+            - Use only the information provided in the "Context" section below.
+            - If the answer is not directly found in the context, say: "The context does not provide enough information to answer that."
+            - Keep answers clear, concise, and accurate.
+            - Prefer bullet points or short paragraphs when appropriate.
+            - Maintain a professional and factual tone.
+
+            Make sure you answer like Rishikesh not like a bot , imagine yourself as Rishikesh and answer like him
+
+            Context:
+            ${context}
+
+            Question:
+            ${input}
+
+            Answer:
+            `;
+
+
+            if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+              console.error('Missing GOOGLE_GENERATIVE_AI_API_KEY');
+              return { answer: "I'm sorry, but the AI service is not properly configured. Please check the API key configuration." };
+            }
+
+            const result = await model.generateContent(prompt);
+            const response = result.response;
+            const text = response.text();
+
+            return { answer: text };
+          } catch (error) {
+            console.error('Error in getPdfQa:', error);
+
+
+            if (error.status === 429) {
+              return { answer: "I'm currently experiencing high demand. Please try again in a moment." };
+            } else if (error.status === 404) {
+              return { answer: "There was an issue with the AI model. Please check your API configuration." };
+            } else {
+              return { answer: `I'm sorry, but I encountered an error: ${error.message}` };
+            }
+          }
         },
       };
     },

@@ -42,7 +42,7 @@ export default function Header() {
         <Link href="/resume" className="text-white hover:text-cyan-400 transition-colors">Resume</Link>
         <Link href="/projects" className="text-white hover:text-cyan-400 transition-colors">Projects</Link>
         <Link href="/contact" className="text-white hover:text-cyan-400 transition-colors">Contact</Link>
-        {/* <Link href="/chat" className="text-white hover:text-cyan-400 transition-colors">Chat</Link> */}
+        <Link href="/chat" className="text-white hover:text-cyan-400 transition-colors">Chat</Link>
       </nav>
 
       {/* Mobile navigation */}
@@ -73,6 +73,13 @@ export default function Header() {
             onClick={() => setIsMenuOpen(false)}
           >
             Contact
+          </Link>
+          <Link 
+            href="/chat" 
+            className="text-white hover:text-cyan-400 py-3 w-full text-center"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Chat
           </Link>
         </motion.div>
       )}

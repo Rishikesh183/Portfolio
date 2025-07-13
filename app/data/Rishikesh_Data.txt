@@ -1,0 +1,138 @@
+# Personal Information
+- **Name:** Devarashetty Rishikesh (Rishi)
+- **Date of Birth:** 17th July 2004
+# Education
+- **Schooling:**
+  - Studied at **SR Digi School**
+  - **Achievement:** Topper of the school with **9.7 CGPA** in 10th Board Exams (2019)
+- **Intermediate:**
+  - Studied at **Narayana Junior College** (2019–2021)
+  - **Score:** 972/1000
+  - **EAMCET Rank:** 6991
+- **Undergraduate:**
+  - **College:** Keshav Memorial Institute of Technology (KMIT)
+  - **Branch:** B.Tech in Computer Science - AI & ML specialization
+  - **Current CGPA:** 7.5
+# Technical Skills
+- **Languages:** Python, Java, C, HTML/CSS, JavaScript, SQL
+- **Developer Tools:** Git, GitHub, VS Code, Eclipse, Google Cloud Platform
+- **Frameworks:** React, Node.js, Express, Next.js, Tailwind CSS
+- **Artificial Intelligence:** Machine Learning (ML), Deep Learning (DL), Natural Language Processing (NLP),
+Generative AI, Transformers
+- **Databases:** MongoDB, FAISS
+# Tech Stack & Interests
+- Passionate about **Web Development** and started learning in 2nd semester with JavaScript.
+- Skilled in modern web frameworks like **React** and **Next.js**.
+- Highly interested in **Artificial Intelligence**, especially in **Large Language Models (LLMs)**.
+- Always curious to learn AI concepts from scratch.
+# Projects
+```json
+[
+  {
+    "title": "SkillForge AI",
+    "description": "AI-powered LMS platform offering mock interviews, PDF generation, and interview questions with
+notes using React, Firebase, Clerk, and Shadcn.",
+    "link": "https://ai-learner-nu.vercel.app/"
+  },
+  {
+    "title": "CricTrack",
+    "description": "Fan app for SRH live scores and news updates built with React, Tailwind, and Clerk.",
+    "link": "https://bleedorangism.vercel.app/"
+  },
+  {
+    "title": "Truth Lens",
+    "description": "Fake news detection system using ML models like Naive Bayes, Random Forest, and Transformers.",
+    "link": "https://github.com/Rishikesh183"
+  },
+  {
+    "title": "Patreon Pioneers",
+    "description": "Platform for content creators to earn support from fans, built with Next.js.",
+   "link": "https://github.com/Rishikesh183"
+  },
+  {
+    "title": "Password Manager",
+    "description": "Secure full-stack app to manage and store passwords using React, Express.js, Tailwind CSS, and
+MongoDB.",
+    "link": "https://github.com/Rishikesh183/GetMeAChai"
+  },
+  {
+    "title": "CricLaws",
+    "description": "RAG-based app trained on MCC laws to answer cricket law queries using Streamlit, Langchain, Faiss,
+and Sentence Transformers.",
+    "link": "https://github.com/Rishikesh183"
+  },
+  {
+    "title": "Meme Store",
+    "description": "Template hub for meme creators built using Next.js and Supabase with search and sorting
+functionality.",
+    "link": "https://meme-templates-lemon.vercel.app/"
+  },
+  {
+    "title": "Mystery Message",
+    "description": "Next.js + TypeScript app for creating unique links to receive anonymous messages.",
+    "link": "https://github.com/Rishikesh183"
+  },
+  {
+    "title": "Quizify",
+    "description": "Basic Quiz application built using React.js and Typescript with an interactive dashboard.",
+    "link": "https://cricmawaquiz.vercel.app/"
+  }
+]
+```
+# Hobbies and Interests
+- Big fan of **Cricket**.
+- Runs a **social media handle** with:
+  - **20K+ Instagram followers**
+  - **1K+ Twitter followers**
+- Conducts tournaments and builds fun apps for user engagement.
+- Favorite Cricket Team: **Sunrisers Hyderabad (SRH)**
+- Idol and Inspiration: **Virat Kohli**
+
+Resume : 
+
+
+DEVARASHETTY RISHIKESH+91-7013848045 #rishikeshdevarashetty@gmail.com ïlinkedin.com/in/rishikesh portfolio
+Education
+Keshav Memorial Institute of Technology 2021 – 2025
+Bachelor of Technology in Computer Science(CGPA:7.5) Hyderabad, Telangana
+Relevant Coursework
+•DSA using Java•Software Engineering•Database Management
+•Machine Learning•Generative AI•Large Language Models
+•MERN STACK•Deep Learning•Web Development
+Technical Skills
+Languages: Python, Java, C, HTML/CSS, JavaScript, SQL
+Developer Tools: Git, GitHub, VS Code, Eclipse, Google Cloud Platform
+Frameworks: React, Node.js, Express, Next.js, Tailwind
+Artificial Intelligence: ML, DL, NLP, GEN AI ,Transformers
+Databases: MongoDB, FAISS
+Projects
+TruthLens |Na ̈ıve Bayes, Random Forest, Transformers August 2024
+•Developed a fake news detection platform using Python, with real-time data processing through machine learning models
+like Na ̈ıve Bayes, Random Forest, and Transformers.
+•Implemented web scraping with Beautiful Soup, processing data for machine learning models to achieve 91% accuracy
+in fake news detection.
+•Deployed a detection system to reduce misinformation spread by 10%, promoting more accurate information.
+CricTrack |React.js , Tailwind March 2024
+•Developed a responsive cricket score tracking application that delivers real-time IPL scores, player statistics, and match
+summaries.
+•Designed an intuitive UI/UX for cricket fans to easily follow live matches and individual player stats.
+•Leveraged React for dynamic component updates and seamless user interactions.
+CricLaws |LangChain, HuggingFace, Mistral, FAISS, Streamlit, Python, VS Code February 2024
+•Developed a fine-tuned AI chatbot trained on the MCC laws of cricket, utilizing FAISS for vector storage and
+HuggingFace’s Mistral model for natural language understanding.
+•Designed a project pipeline to process raw PDFs, create vector embeddings, and store them in FAISS for efficient
+retrieval.
+•Built a responsive chatbot interface using Streamlit, enabling users to query cricket rules in natural language.
+SkillForge AI |React+vite , Tailwind , Firebase , Clerk,Gemini Ai October 2023
+•Developed an AI-powered learning platform using Clerk for authentication and Firebase for cloud storage,
+ensuring secure and scalable user management
+•Implemented an interactive interview simulation module leveraging Gemini AI to analyze user responses and
+provide real-time, personalized feedback.
+•Created a dynamic PDF generation feature that converts user-input topics into structured, downloadable learning
+materials.
+•Integrated a smart question-sourcing system that fetches relevant interview questions from the web
+based on user-selected topics, enhancing preparation efficiency
+Courses/Certifications
+•Supervised Machine Learning(Regression and Classification) by Coursera
+•Advanced Machine Learning Algorithms by Coursera
+•Full Stack Web Development(HTML, CSS, Javascript, Node.js, Express, React.js, MongoDB) by GeeksForGeeks
