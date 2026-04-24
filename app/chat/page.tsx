@@ -30,12 +30,41 @@ const ChatPage = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: userMessage }),
       });
-      const data = await res.json();
-      const botMessage = typeof data.answer === 'string' ? data.answer : 'Sorry, I could not find an answer.';
 
+      if (!res.ok) {
+        throw new Error('Failed to get chat response');
+      }
+
+      if (!res.body) {
+        const fallbackText = await res.text();
+        setChatLog(prev => {
+          const updatedLog = [...prev];
+          updatedLog[updatedLog.length - 1].bot = fallbackText || 'Sorry, I could not find an answer.';
+          return updatedLog;
+        });
+        return;
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let botMessage = '';
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        botMessage += decoder.decode(value, { stream: true });
+        setChatLog(prev => {
+          const updatedLog = [...prev];
+          updatedLog[updatedLog.length - 1].bot = botMessage;
+          return updatedLog;
+        });
+      }
+
+      botMessage += decoder.decode();
       setChatLog(prev => {
         const updatedLog = [...prev];
-        updatedLog[updatedLog.length - 1].bot = botMessage;
+        updatedLog[updatedLog.length - 1].bot = botMessage || 'Sorry, I could not find an answer.';
         return updatedLog;
       });
     } catch (err) {

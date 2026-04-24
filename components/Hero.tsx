@@ -15,7 +15,7 @@ export default function Hero() {
                     <Image src="/Dev.png" alt='dev' width={132} height={132} className="w-24 h-24 md:w-32 md:h-32" />
                 </div>
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 md:mb-4">
-                    Hi, I&apos;m <span className="text-cyan-400">Rishi</span>
+                    Hi, I&apos;m <span className="text-cyan-400">Rishikesh</span>
                 </h1>
                 <p className="text-base md:text-lg font-semibold mx-auto text-gray-300">
                     Aspiring Software Engineer with a passion for AI and Full Stack Development. Computer Engineering student building real-world projects and exploring modern technologies

@@ -1,0 +1,24 @@
+{
+  "@context": "https://openvex.dev/ns/v0.2.0",
+  "@id": "https://example.com/vex/my-portfolio-next-postcss-ghsa-qx2v-qp2m-jg93",
+  "author": "Codex",
+  "timestamp": "2026-04-24T00:00:00Z",
+  "version": 1,
+  "tooling": "Codex",
+  "statements": [
+    {
+      "vulnerability": {
+        "name": "GHSA-qx2v-qp2m-jg93"
+      },
+      "products": [
+        {
+          "@id": "pkg:npm/next@16.2.4"
+        }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_not_in_execute_path",
+      "timestamp": "2026-04-24T00:00:00Z",
+      "action_statement": "This application ships Next.js 16.2.4. The flagged vulnerable component is a nested build-time PostCSS dependency used by Next.js tooling, and it is not part of the deployed runtime request path for this portfolio application."
+    }
+  ]
+}
