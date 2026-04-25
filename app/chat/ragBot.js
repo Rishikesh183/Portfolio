@@ -1,6 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { planRecruiterResponse } from "@/app/chat/recruiterAgent";
 
 const KNOWLEDGE_FILE = path.join(
   process.cwd(),
@@ -206,6 +207,21 @@ function keywordScore(queryProfile, chunkProfile, chunkText) {
   return score;
 }
 
+async function streamTextResponse(text) {
+  return new ReadableStream({
+    async start(controller) {
+      const chunks = text.match(/.{1,24}(\s|$)|.{1,24}/g) || [text];
+
+      for (const chunk of chunks) {
+        controller.enqueue(encoder.encode(chunk));
+        await delay(35);
+      }
+
+      controller.close();
+    },
+  });
+}
+
 async function loadKnowledgeBase() {
   if (!knowledgeBasePromise) {
     knowledgeBasePromise = (async () => {
@@ -321,7 +337,8 @@ async function retrieveRelevantChunks(query) {
     .filter((chunk, index) => chunk.score > 0 || index === 0);
 }
 
-function buildPrompt(context, query) {
+function buildPrompt(context, query, options = {}) {
+  const { history = [], contextNote = "" } = options;
   const serializedContext = context.length
     ? context
         .map(
@@ -330,6 +347,18 @@ function buildPrompt(context, query) {
         )
         .join("\n\n")
     : "<snippet index=\"0\">No relevant snippets found.</snippet>";
+
+  const serializedHistory = history.length
+    ? history
+        .slice(-6)
+        .map(
+          (entry, index) => `<turn index="${index + 1}">
+  <user>${entry.user || ""}</user>
+  <assistant>${entry.bot || ""}</assistant>
+</turn>`,
+        )
+        .join("\n")
+    : "<turn index=\"0\"><user></user><assistant></assistant></turn>";
 
   return `<system_prompt>
   <identity>
@@ -405,6 +434,13 @@ function buildPrompt(context, query) {
   <knowledge>
 ${serializedContext}
   </knowledge>
+
+  <conversation_state>
+    <agent_note>${contextNote || "No special recruiter action needed."}</agent_note>
+    <recent_history>
+${serializedHistory}
+    </recent_history>
+  </conversation_state>
 
   <user_query>
 ${query}
@@ -609,8 +645,22 @@ async function streamResponse(prompt, options = {}) {
 }
 
 export async function createChatStream(query, options = {}) {
+  const { history = [], sessionId } = options;
+  const recruiterPlan = await planRecruiterResponse({
+    sessionId,
+    message: query,
+    history,
+  });
+
+  if (recruiterPlan.handled && recruiterPlan.directReply) {
+    return streamTextResponse(recruiterPlan.directReply);
+  }
+
   const relevantChunks = await retrieveRelevantChunks(query);
-  const prompt = buildPrompt(relevantChunks, query);
+  const prompt = buildPrompt(relevantChunks, query, {
+    history,
+    contextNote: recruiterPlan.contextNote,
+  });
   return streamResponse(prompt, options);
 }
 

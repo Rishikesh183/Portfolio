@@ -2,13 +2,21 @@ import { createChatStream } from "@/app/chat/ragBot";
 
 export async function POST(req) {
   try {
-    const { message } = await req.json();
+    const { message, history = [], sessionId } = await req.json();
 
     if (!message || typeof message !== "string") {
       return Response.json({ error: "Invalid input" }, { status: 400 });
     }
 
-    const stream = await createChatStream(message, { signal: req.signal });
+    if (history && !Array.isArray(history)) {
+      return Response.json({ error: "Invalid history" }, { status: 400 });
+    }
+
+    const stream = await createChatStream(message, {
+      signal: req.signal,
+      history,
+      sessionId,
+    });
 
     return new Response(stream, {
       headers: {
