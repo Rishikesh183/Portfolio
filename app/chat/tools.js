@@ -1,16 +1,18 @@
-import nodemailer from "nodemailer";
+// import nodemailer from "nodemailer";
 import {
   appendTranscriptSummary,
   createTicket,
   saveLead,
 } from "@/app/chat/ticketStore";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const DEFAULT_RISHI_EMAIL = "rishikeshdevarashetty@gmail.com";
 
 export function buildRecruiterEmailSubject(payload) {
   return `[Recruiter Lead] ${payload.company || "New lead"} - ${payload.intent}`;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function buildEmailHtml(payload) {
   const transcriptHtml = payload.recentMessages
     .map(
@@ -39,7 +41,19 @@ function buildEmailHtml(payload) {
   `;
 }
 
+// Mail service disabled. Returns a no-op success so the recruiter ticket flow
+// (lead + summary + ticket) still completes without sending any email.
+// Re-enable by restoring the commented implementation below and the
+// `nodemailer` import at the top of this file.
 export async function sendRecruiterNotificationEmail(payload) {
+  return {
+    ok: true,
+    skipped: true,
+    reason: "email_disabled",
+    subject: buildRecruiterEmailSubject(payload),
+  };
+
+  /*
   const appPassword = process.env.GMAIL_APP_PASSWORD;
   const from = DEFAULT_RISHI_EMAIL;
   const to = process.env.RECRUITER_ALERT_EMAIL || DEFAULT_RISHI_EMAIL;
@@ -80,6 +94,7 @@ export async function sendRecruiterNotificationEmail(payload) {
       error: error.message,
     };
   }
+  */
 }
 
 export async function createRecruiterLead(payload) {

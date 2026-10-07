@@ -1,80 +1,143 @@
 # Personal Information
-- **Name:** Devarashetty Rishikesh
+- **Name:** Devarashetty RishiKesh
 - **Phone:** +91-7013848045
 - **Email:** rishikeshdevarashetty@gmail.com
 - **LinkedIn:** https://linkedin.com/in/rishikesh24
-- **Portfolio:** Personal portfolio site
+- **GitHub:** https://github.com/Rishikesh183
+- **Portfolio:** https://rishikeshdev.vercel.app
+- **LeetCode:** https://leetcode.com/u/rishikesh183/
+- **Location:** Hyderabad, India
 
 # Professional Summary
-- Full Stack Developer with hands-on experience building and shipping end-to-end products across frontend and backend.
-- Proven ability to design scalable APIs, integrate LLM pipelines and agentic AI workflows, and take features from idea to production with full ownership.
-- Experienced with React, Next.js, Node.js, Python, and AWS.
-- Comfortable working in ambiguity and collaborating across product and engineering teams.
+- AI Engineer (Agentic AI + Full Stack) with ~1 year at SLRI Solutions, converted from intern to full-time in 2 months.
+- Ships LLM voice agents, content generators, and real-time systems across three products at SLRI Solutions.
+- NDA: two of the three products are pre-launch. Their product names and app links cannot be shared publicly. Features and engineering work can be discussed freely; if asked for those names or links, say they are under NDA and cannot be named yet.
+- Stack: TypeScript, Python, React, Next.js 15, NestJS, FastAPI, Redis, WebSockets/WebRTC, LLM orchestration.
+- Hackathon Finalist (Meta AI x Hugging Face; Outskill x OpenAI Codex). Merged open-source PR in Bootstrap (174k stars).
+- DSA: 650+ problems solved (430 LeetCode, 247 GFG).
 
 # Experience
-## SLRIS
-- **AI Engineer (Full-Time):** October 2024 - Present
-  - Built an end-to-end voice agent system using Smallest.ai for TTS, OpenAI Whisper for STT, and Gemini via OpenRouter for real-time query processing and conversational responses.
-  - Developed backend REST APIs using NestJS to handle request orchestration, agent workflows, and data processing for AI-driven applications.
-  - Designed and implemented AI-powered tools including Spreadsheet Generator, Document Generator, and Image Generator for automated content creation workflows.
-  - Integrated AI services into production-ready systems with a focus on low-latency responses, modular architecture, and scalability.
-- **AI Engineer Intern:** July 2024 - September 2024
-  - Developed AI avatar-based interaction systems using HeyGen and integrated them into frontend applications built with React.js.
-  - Built chatbot interfaces with React and implemented chat history management by designing backend APIs using Next.js.
-  - Created responsive UI components and ensured seamless communication between frontend and backend for real-time conversational experiences.
+## SLRI Solutions, Hyderabad
+### AI Engineer (Full-Time): Oct 2025 - Present
+(Converted from intern to full-time in 2 months)
 
-# Achievements
-- Finalist in the Meta AI x Hugging Face Hackathon.
-- Built an OpenEnv-based reinforcement learning environment simulating real-world government workflows such as Aadhaar-PAN linking, passport services, and driving licence services.
-- Demonstrated the ability to build developer tools and AI systems that can operate at scale.
+**SimplyOffer (AI-powered job platform)**
+- Migrated entire frontend from React.js to Next.js 15.
+- Wrote candidate and job data-fetching APIs in NestJS.
+- Built end-to-end AI chatbot and voice agent (TTS: Smallest.ai, STT: Gemini, LLM: OpenAI) with voice streaming; designed architecture to reduce latency to 20-30ms.
+
+**AI Content Generation Platform (pre-launch, name withheld under NDA)**
+- Built LLM-powered PPT Generator and Spreadsheet Generator; integrated into React frontend with custom PPT and spreadsheet viewers.
+- Stored generated assets in MongoDB; integrated third-party app connectors via Composio.
+- Built the platform's creative studio: AI music and matching video generation (Kie.ai/Suno) with AI lyrics, genre, mood, style, and optional voice cloning; dual-mode UX (guided for beginners, full parameter control for pros).
+
+**Social Media Platform (pre-launch, name withheld under NDA; built on the content generation platform above)**
+- Backend as a Turborepo monorepo with 14 microservices; React frontend.
+- Built real-time Messenger using WebSockets with Pub/Sub; used Redis for multi-instance socket stability and horizontal scaling.
+- Built live notification system (messages, posts, live streams, reshares, likes, comments) over WebSockets.
+- Built live host-to-peer video streaming using Cloudflare WebRTC.
+- Designed 5-bucket feed algorithm, post ranking, and Explore page (local + global trending).
+- Wrote authentication system with email verification.
+- Handled concurrency with DB indexing, message queues, event-driven architecture, Valkey, Redis cache, connection pooling, debouncing.
+
+### AI Engineer Intern: Jul 2025 - Sep 2025
+- Built an AI Avatar using HeyGen that speaks LLM responses and presents PPT slides.
+- Built AI chatbot frontend in React.js connected to backend APIs.
+- Built Angular dashboards for Project SmartCompaire (with GitHub Copilot assistance) and integrated the chatbot.
 
 # Projects
 ```json
 [
   {
-    "title": "AuctionTrack",
-    "timeline": "March 2024",
-    "stack": ["Next.js", "Supabase Realtime", "PostgreSQL"],
-    "description": "Built a real-time distributed auction platform with instant bid updates and synchronized state across multiple clients using Supabase Realtime.",
-    "highlights": [
-      "Designed a structured database schema for auction history, player data, and analytics.",
-      "Developed a responsive Next.js frontend for live visualization and historical insights."
-    ]
+    "title": "Devloop",
+    "timeline": "2026",
+    "stack": ["FastAPI", "Next.js 15", "OpenRouter", "Docker", "Supabase", "GitHub OAuth", "Slack OAuth"],
+    "description": "Autonomous incident resolution agent: Sentry error -> LLM patch (8-model fallback via OpenRouter) -> Docker sandbox -> GitHub PR + Slack notification. Finalist, Outskill x OpenAI Codex Hackathon; built end-to-end in 7 days (hackathon build, not production).",
+    "highlights": ["SSE streaming for real-time frontend updates", "Supabase row-level security for multi-tenant isolation"],
+    "link": "https://github.com/Rishikesh183/devloop"
   },
   {
-    "title": "TruthLens",
-    "timeline": "August 2024",
-    "stack": ["Transformers", "Node.js", "React", "NLP"],
-    "description": "Developed a transformer-based NLP fake news detection system achieving 91% accuracy.",
-    "highlights": [
-      "Built a full-stack application with a React frontend and Node.js backend for real-time classification.",
-      "Implemented automated ML preprocessing and inference pipelines for scalable, production-ready prediction workflows."
-    ]
+    "title": "CivicPath",
+    "timeline": "2026",
+    "stack": ["Python", "Reinforcement Learning", "Custom OpenAI Gym / OpenEnv"],
+    "description": "Meta AI x Hugging Face Hackathon Finalist. RL agent modelling Indian government service workflows (Aadhaar-PAN linking, passport, driving licence) as a Markov Decision Process.",
+    "highlights": ["Custom environment with a 7-dimensional reward system"]
+  },
+  {
+    "title": "absent-mcp",
+    "timeline": "2026",
+    "stack": ["TypeScript", "Node.js", "Model Context Protocol (MCP)", "npm"],
+    "description": "Published npm MCP server that statically analyses codebases for missing security controls (IDOR, token refresh/revocation, rate limiting, session management) and generates code-quality review reports. Targets architectural gaps, not CVEs.",
+    "highlights": ["Tools: scan_repo, generate_report, list_controls, explain_control", "Runs fully local, no API key; works with Claude Code/Desktop, Cursor, Copilot, Codex (npx -y absent-mcp)"],
+    "link": "https://github.com/Rishikesh183/absent-mcp"
+  },
+  {
+    "title": "JobPilot",
+    "timeline": "2026",
+    "stack": ["Next.js 16", "React 19", "OpenRouter", "Gemini", "Adzuna API", "Browserbase", "Stagehand", "PostHog"],
+    "description": "Agentic job-hunting assistant: Adzuna job discovery, LLM match scoring, and automated company research via Browserbase/Stagehand, with Gemini fallback.",
+    "link": "https://github.com/Rishikesh183/job-pilot"
+  },
+  {
+    "title": "Smart-ATS",
+    "timeline": "2026",
+    "stack": ["Python", "FAISS", "BM25", "OpenAI Embeddings", "gpt-4o-mini"],
+    "description": "AI candidate ranking system replacing keyword ATS with semantic retrieval and LLM scoring.",
+    "highlights": ["Hybrid retrieval: FAISS + BM25 + Reciprocal Rank Fusion", "LLM scoring with honeypot fake-profile detection; ranks 100k candidates"],
+    "link": "https://github.com/Rishikesh183/smart-ats"
+  },
+  {
+    "title": "Note AI",
+    "timeline": "2026",
+    "stack": ["React", "Next.js 15", "NestJS", "PostgreSQL", "TipTap", "ProseMirror"],
+    "description": "Rich-text editor with custom schemas and extensions, AI inline commands (rewrite/expand/summarise), real-time autosave, document versioning, and reusable templates."
+  },
+  {
+    "title": "AuctionTrack",
+    "timeline": "2025",
+    "stack": ["Next.js", "React", "TypeScript", "Supabase Realtime", "PostgreSQL"],
+    "description": "Real-time bidding platform with Supabase Realtime subscriptions and conflict-free concurrent bid state.",
+    "highlights": ["Sub-200ms bid propagation latency", "Structured schema for auction history, player data, analytics"]
   },
   {
     "title": "SkillForge AI",
-    "timeline": "October 2023",
-    "stack": ["React (Vite)", "TypeScript", "Firebase", "Gemini API", "LLMs"],
-    "description": "Built an AI-powered developer tool with interview simulation, dynamic PDF generation, and LLM-backed personalized feedback.",
-    "highlights": [
-      "Shipped the product end-to-end as a full stack application.",
-      "Integrated Gemini LLM API for real-time content generation and Firebase authentication for scalable user management."
-    ]
+    "timeline": "2025",
+    "stack": ["React", "TypeScript", "Next.js", "Firebase", "Clerk", "Gemini API"],
+    "description": "AI interview-prep platform with Gemini-powered personalized feedback, interview simulation, and dynamic PDF generation.",
+    "link": "https://ai-learner-nu.vercel.app/"
+  },
+  {
+    "title": "TruthLens",
+    "timeline": "2024",
+    "stack": ["Python", "FastAPI", "HuggingFace Transformers", "Pandas", "NumPy"],
+    "description": "Transformer-based NLP misinformation detection exposed via FastAPI REST API with structured JSON responses; full pipeline of preprocessing, inference, and API integration."
   }
 ]
 ```
 
+# Open Source
+- **Bootstrap (174k stars):** Merged PR #42416 - added .nvmrc and migrated all 7 CI workflow files to node-version-file (2026).
+- **Flowbite React:** PR #1675 submitted - fixes tailwind-merge peer dependency (not merged).
+
+# Achievements
+- Finalist, Meta AI x Hugging Face Hackathon (CivicPath RL agent).
+- Finalist, Outskill x OpenAI Codex Hackathon (Devloop, built in 7 days).
+- 590+ DSA problems solved (343 LeetCode, 247 GFG).
+
 # Technical Skills
-- **Languages:** Python, JavaScript, TypeScript, Java
-- **Frontend:** React, Next.js, Tailwind CSS
-- **Backend:** Node.js, Express, FastAPI, RESTful APIs, NestJS
-- **AI/ML and LLMs:** LLM Integration, Agentic AI, RAG, NLP, Transformers, Gemini API
-- **Cloud and Infra:** AWS, Git, GitHub
-- **Databases:** MongoDB, PostgreSQL, Redis, Pinecone, FAISS
+- **Languages:** TypeScript, JavaScript, Python, SQL
+- **Frontend:** React, Next.js 15, Angular, TailwindCSS, HTML5, CSS3
+- **Backend:** Node.js, NestJS, FastAPI, REST APIs
+- **Real-Time:** WebSockets, WebRTC (Cloudflare), Redis Pub/Sub, SSE, Valkey
+- **Databases:** PostgreSQL, MongoDB, Redis, Supabase, Pinecone, FAISS
+- **AI/LLM:** OpenAI, Gemini, HuggingFace Transformers, OpenRouter, RAG pipelines, LLM orchestration, agentic workflows, MCP (Model Context Protocol), Composio, HeyGen, Smallest.ai TTS, Kie.ai
+- **Architecture:** Microservices, Turborepo monorepo, event-driven, Pub/Sub, message queues, connection pooling, multi-instance socket stability
+- **DevOps & Cloud:** Docker, AWS, CI/CD, GitHub Actions, Render, MongoDB Atlas
+- **Tools:** Git, Postman, GitHub Copilot, Supabase RLS, GitHub OAuth, Slack OAuth
+- **Familiar (not primary):** Java, Go, TensorFlow
 
 # Education
-- **College:** Keshav Memorial Institute of Technology
-- **Degree:** B.Tech in Computer Science
-- **CGPA:** 7.5
-- **Location:** Hyderabad, Telangana
+- **College:** Keshav Memorial Institute of Technology (KMIT), Hyderabad
+- **Degree:** B.Tech in Computer Science and Engineering
+- **CGPA:** 7.5/10
 - **Duration:** 2021 - 2025

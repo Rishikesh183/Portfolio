@@ -12,7 +12,7 @@ const KNOWLEDGE_FILE = path.join(
 
 const CHUNK_SIZE = 900;
 const CHUNK_OVERLAP = 180;
-const MAX_RETRIEVED_CHUNKS = 4;
+const MAX_RETRIEVED_CHUNKS = 6;
 const MAX_RETRIES = 3;
 const RETRY_DELAY_MS = 1200;
 const GEMINI_MODEL = "gemini-2.5-flash";

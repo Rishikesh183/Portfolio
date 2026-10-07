@@ -84,6 +84,8 @@ const ChatPage = () => {
   const [recruiterNudge, setRecruiterNudge] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Reads localStorage on mount, so state must be set from an effect (SSR-safe).
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     const savedSessionId = window.localStorage.getItem('rishi-chat-session-id');
     if (savedSessionId) {
@@ -95,6 +97,7 @@ const ChatPage = () => {
     window.localStorage.setItem('rishi-chat-session-id', nextSessionId);
     setSessionId(nextSessionId);
   }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -102,6 +105,7 @@ const ChatPage = () => {
 
   useEffect(() => {
     if (!showRecruiterForm || ticketConfirmation) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setRecruiterNudge('');
       return;
     }
@@ -286,7 +290,7 @@ const ChatPage = () => {
           </span>
         </h1>
 
-        {showRecruiterForm ? (
+        {/* {showRecruiterForm ? (
           <div className="rounded-xl border border-blue-700 bg-blue-950/40 p-3 sm:p-4 space-y-3">
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -383,14 +387,14 @@ const ChatPage = () => {
         ) : (
           ticketConfirmation && (
             <div className="rounded-xl border border-emerald-700 bg-emerald-950/40 p-3 sm:p-4 text-sm text-emerald-100">
-              I've already alerted my Gmail about this.
+              I&apos;ve already alerted my Gmail about this.
               <br />
               Ticket number: <span className="font-semibold">{ticketConfirmation.ticketId}</span>
               <br />
               Mail subject: <span className="font-semibold">{ticketConfirmation.emailSubject}</span>
             </div>
           )
-        )}
+        )} */}
 
         <div className="space-y-4 h-[50vh] sm:h-[55vh] md:h-[60vh] overflow-y-auto rounded-lg border border-purple-700 p-2 sm:p-3 md:p-4 bg-black bg-opacity-50">
           {chatLog.length === 0 ? (
